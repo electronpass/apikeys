@@ -2,6 +2,7 @@
 This repository holds templates and encrypted credentials used by ElectronPass as well as `configure.py` script for compiling the templates.
 
 ## Dependencies
+- [python3](https://www.python.org/)
 - [openssl](https://www.openssl.org/)
 
 
