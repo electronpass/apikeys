@@ -6,7 +6,7 @@ This repository holds templates and encrypted credentials used by ElectronPass a
 
 
 ## Why and how?
-When using  APIs provided by online services such as Google Drive, Mega, Dropbox, programs usually have to identify themselves using a ID and SECRET. As the name suggests, at least SECRET has to be kept secret. Publishing it in the source code therefore is not an option.
+When using  APIs provided by online services such as Google Drive, Mega, Dropbox, programs usually have to identify themselves using a ID and SECRET. As the name suggests, at least SECRET has to be kept secret. Publishing it in the source code therefore is not an option. For retrieving your own credentials, refer to [RETRIEVING_CREDENTIALS.](https://github.com/electronpass/credentials/blob/master/RETRIEVING_CREDENTIALS.md)
 
 Each app (desktop, Android, iOS ...) uses a special configuration file which provides those variables to the compiler. Compiler then embeds them into binaries in the compile time. Why compile time? Well, if there were a configuration file containing all those variables embedded in each package, it would be quite an easy job to find it. Making it part of the binary makes it at least a bit harder, but avoiding embedding this info into our program completely is unfortunately not possible. If you somehow manage to retrieve this information from binaries, please tell us how, so we can improve ElectronPass (possibly using some obfuscation techniques).
 
