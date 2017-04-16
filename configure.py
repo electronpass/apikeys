@@ -35,7 +35,7 @@ with open("keys.json", "r") as keysfile, open(template, "r") as tplfile, open(ou
             elif var_active:
                 var_name += char
             else: current_line += char
-        if current_line != "": result += current_line + "\n"
+        if current_line != "": result += current_line.rstrip() + "\n"
 
     if result == "":
         print("Result is empty!")
