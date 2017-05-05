@@ -7,7 +7,7 @@ import json
 enc_file, passwd, template, output_file_name = sys.argv[1:5]
 print("Compiling", template, "with data from", enc_file, "to", output_file_name)
 print("Decrypting ...")
-st = os.system("openssl aes-256-cbc -a -d -in " + enc_file + " -out keys.json -pass pass:" + passwd)
+st = os.system("gpg -d --batch --passphrase {} -o keys.json {}".format(passwd, enc_file))
 if st != 0:
     print("Decryption failed, exiting!")
     sys.exit(1)

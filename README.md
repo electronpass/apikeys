@@ -3,7 +3,7 @@ This repository holds templates and encrypted credentials used by ElectronPass a
 
 ## Dependencies
 - [python3](https://www.python.org/)
-- [openssl](https://www.openssl.org/)
+- [gpg](https://gnupg.org)
 
 
 ## Why and how?
@@ -15,9 +15,9 @@ Template configuration files for each platform is saved as `[platform_name].tpl`
 
     python3 configure.py [file_to_decrypt] [encryption_pass] [template_to_compile] [output_file]
 
-`sample.json` is a file providing sample keys. To set it as input file in configure.py you have to encrypt it first. Decrypt and encrypt files using openssl like this:
-- encryption: `openssl aes-256-cbc -a -in [file_to_encrypt] -out [output_file]`
-- decryption: `openssl aes-256-cbc -a -d -in [file_to_decrypt] -out [output_file]`
+`sample.json` is a file providing sample keys. To set it as input file in configure.py you have to encrypt it first. Decrypt and encrypt files using GPG like this:
+- encryption: `gpg ---smetric --cipher-algo AES256 --armor -o [output_file] [input_file]`
+- decryption: `gpg -d -o [output_file] [input_file]`
 
 BEWARE: `keys.json` file will be overridden and deleted by `configure.py` in compilation process. (Why decrypt content to file and then read it? 1.: We can use exact same commands as in terminal. 2.: no need to pipe output. 3.: easier to check command output)
 
