@@ -2,5 +2,6 @@
   "GDRIVE_ID": "sample_id",
   "GDRIVE_SECRET": "sample_secret",
   "DROPBOX_ID": "sample_id",
-  "DROPBOX_SECRET": "sample_secret"
+  "DROPBOX_SECRET": "sample_secret",
+  "TOKEN_PASSWORD": "password_used_to_encrypt_tokens"
 }
