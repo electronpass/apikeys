@@ -20,7 +20,7 @@ except subprocess.CalledProcessError:
     print(completed_process.stdout, '\n', completed_process.stderr, '\nDecryption failed, exiting')
     sys.exit(1)
 
-api_keys = json.loads(command_output)
+api_keys = json.loads(command_output.decode('utf8'))
 
 print('Keys to fill: ' + ', '.join(api_keys.keys()))
 
