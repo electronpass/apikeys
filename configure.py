@@ -1,48 +1,55 @@
 #!/usr/bin/python3
 
 import sys
-import os
+import subprocess
 import json
+import re
 
-enc_file, passwd, template, output_file_name = sys.argv[1:5]
-print("Compiling", template, "with data from", enc_file, "to", output_file_name)
-print("Decrypting ...")
-st = os.system("gpg -d --batch --passphrase {} -o keys.json {}".format(passwd, enc_file))
-if st != 0:
-    print("Decryption failed, exiting!")
+if len(sys.argv) != 4:
+    print('Usage:\nconfigure.py [encrypted file] [password] [output file] ')
+    sys.exit()
+
+encrypted_file, password, output_file = sys.argv[1:]
+
+print('Decrypting {}'.format(encrypted_file))
+
+# Call gpg, decrypted file will be stored in completed_process.stdout
+completed_process = subprocess.run(['gpg', '-d', '--batch', '--passphrase', password, encrypted_file],
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+if completed_process.returncode != 0:
+    print(completed_process.stdout, '\n', completed_process.stderr, '\nDecryption failed, exiting')
     sys.exit(1)
 
-print("Opening files ...")
-with open("keys.json", "r") as keysfile, open(template, "r") as tplfile, open(output_file_name, "w") as outfile:
-    print("Loading json ...")
-    keysobj = json.loads(keysfile.read())
+api_keys = json.loads(completed_process.stdout)
 
-    print("Compiling template")
-    result = ""
-    for line in tplfile:
-        var_active = False
-        var_name = ""
-        current_line = ""
-        for char in line:
-            if char == "#":
-                break
-            elif char == "%":
-                if var_active:
-                    current_line += keysobj[var_name]
-                else:
-                    var_name = ""
-                var_active = not var_active
-            elif var_active:
-                var_name += char
-            else: current_line += char
-        if current_line != "": result += current_line.rstrip() + "\n"
+print('Keys to fill: ' + ', '.join(api_keys.keys()))
 
-    if result == "":
-        print("Result is empty!")
-    else:
-        print("Writing result to", output_file_name)
-        outfile.write(result)
+# Create a dict with @key_name@ for keys
+patterns_dict = dict()
+for key_name in api_keys.keys(): patterns_dict['@{}@'.format(key_name)] = api_keys[key_name]
 
+print('Opening file {}'.format(output_file))
+with open(output_file, 'r') as f:
+    data = f.read()
 
-print("Cleaning up ...")
-os.remove("keys.json")
+any_matches = False
+
+def replace(match):
+    global any_matches
+    any_matches = True
+    print('Filled in {}'.format(match.group(0)))
+    return patterns_dict[match.group(0)]
+
+# Create regular expression which will match all dict keys
+regex = re.compile('({})'.format('|'.join(map(re.escape, patterns_dict.keys()))))
+# For each match, find corresponding value in dict
+data = regex.sub(replace, data)
+
+if not any_matches:
+    print('No patters matched. Check your file again.')
+
+print('Saving')
+with open(output_file, 'w') as f:
+    f.write(data)
+print('Finished')
