@@ -14,14 +14,13 @@ encrypted_file, password, output_file = sys.argv[1:]
 print('Decrypting {}'.format(encrypted_file))
 
 # Call gpg, decrypted file will be stored in completed_process.stdout
-completed_process = subprocess.run(['gpg', '-d', '--batch', '--passphrase', password, encrypted_file],
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-if completed_process.returncode != 0:
+try:
+    command_output = subprocess.check_output(['gpg', '-d', '--batch', '--passphrase', password, encrypted_file])
+except subprocess.CalledProcessError:
     print(completed_process.stdout, '\n', completed_process.stderr, '\nDecryption failed, exiting')
     sys.exit(1)
 
-api_keys = json.loads(completed_process.stdout)
+api_keys = json.loads(command_output)
 
 print('Keys to fill: ' + ', '.join(api_keys.keys()))
 
